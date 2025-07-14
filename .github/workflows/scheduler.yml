@@ -1,0 +1,39 @@
+name: Posthog to PowerBI Every 3 Mins
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "*/3 * * * *"
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code with GH_PAT
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests boto3
+
+      - name: Run Python script
+        env:
+          POSTHOG_API_SECRET: ${{ secrets.POSTHOG_API_SECRET }}
+          POWER_BI_PUSH_URL: ${{ secrets.POWER_BI_PUSH_URL }}
+        run: python posthog-to-powerbi/main.py
+
+      - name: Commit and push updated checkpoint
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add posthog-to-powerbi/last_processed_time.txt
+          git commit -m "Update checkpoint file from GitHub Actions" || echo "No changes to commit"
+          git push origin HEAD:main
+

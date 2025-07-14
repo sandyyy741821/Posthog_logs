@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Python script
         env:
-          POSTHOG_API_SECRET: ${{ secrets.POSTHOG_API_KEY }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           POWER_BI_PUSH_URL: ${{ secrets.POWER_BI_PUSH_URL }}
         run: python posthog-to-powerbi/main.py
 

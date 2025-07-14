@@ -5,10 +5,10 @@ from datetime import datetime, timezone, timedelta
 import time
 
 # --- CONFIG ---
-POSTHOG_API_KEY = os.environ["POSTHOG_API_KEY"]
-POWER_BI_PUSH_URL = os.environ["POWER_BI_PUSH_URL"]
+POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY",'phx_TtcdtTGuh9zx04dRMUYrWns0vjNFgk04LnVwetHeIUH56lU')
+POWER_BI_PUSH_URL = os.environ.get("POWER_BI_PUSH_URL","https://api.powerbi.com/beta/4a2ebf79-c54a-4ae4-a274-2f55027091ce/datasets/c3fa1272-6e55-4763-8a1c-1a0998cf6b1f/rows?experience=power-bi&key=au7HRRy%2BbqMT4XN8LV8tZZLnGH38CP%2FQkA3h8%2FI9BcmhcYkOhWsA5qK8vd%2Fxi%2BhEyk%2FCTpKkaZ%2Biu14lfbS7ZA%3D%3D")
 CHECKPOINT_FILE = os.path.join(os.path.dirname(__file__), "last_processed_time.txt")
-BATCH_SIZE = 10000
+BATCH_SIZE = 5000
 
 # --- Load last processed time ---
 def load_last_processed_time():

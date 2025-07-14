@@ -5,8 +5,8 @@ from datetime import datetime, timezone, timedelta
 import time
 
 # --- CONFIG ---
-POSTHOG_API_KEY = os.environ["POSTHOG_API_KEY"]
-POWER_BI_PUSH_URL = os.environ["POWER_BI_PUSH_URL"]
+POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY",'phx_TtcdtTGuh9zx04dRMUYrWns0vjNFgk04LnVwetHeIUH56lU')
+POWER_BI_PUSH_URL = os.environ.get("POWER_BI_PUSH_URL","https://api.powerbi.com/beta/4a2ebf79-c54a-4ae4-a274-2f55027091ce/datasets/5824b765-02e5-4593-9d6b-08e2a82da91a/rows?experience=power-bi&key=d%2Bk%2FV8lA02KX0OAQ%2FeL9T9jr4pLpdD7ZLVNlsXddJJ2LeCgjH0%2BnZFZ7Wi%2BAtA5b%2BUddu3xWeNsbMyuqAI3J8g%3D%3D")
 CHECKPOINT_FILE = os.path.join(os.path.dirname(__file__), "last_processed_time.txt")
 BATCH_SIZE = 10000
 
@@ -31,44 +31,30 @@ def save_last_processed_time(timestamp_ms):
     with open(CHECKPOINT_FILE, "w") as f:
         f.write(f"{timestamp_ms}  # {utc_str} [{ist_str}]\n")
 
-# --- Fetch PostHog events ---
-def fetch_posthog_events(from_ts_ms, to_ts_ms, retries=3):
-    events = []
-    url = "https://us.i.posthog.com/api/projects/148940/events/"
+def fetch_posthog_page(url=None, from_ts_ms=None, to_ts_ms=None):
     headers = {"Authorization": f"Bearer {POSTHOG_API_KEY}"}
 
-    after = datetime.fromtimestamp(from_ts_ms / 1000, tz=timezone.utc).isoformat()
-    before = datetime.fromtimestamp(to_ts_ms / 1000, tz=timezone.utc).isoformat()
+    if url is None:
+        url = "https://us.i.posthog.com/api/projects/148940/events/"
+        after = datetime.fromtimestamp(from_ts_ms / 1000, tz=timezone.utc).isoformat()
+        before = datetime.fromtimestamp(to_ts_ms / 1000, tz=timezone.utc).isoformat()
+        params = {
+            "after": after,
+            "before": before,
+            "limit": 1000
+        }
+        response = requests.get(url, headers=headers, params=params, timeout=60)
+    else:
+        response = requests.get(url, headers=headers, timeout=60)
 
-    params = {
-        "after": after,
-        "before": before,
-        "limit": 1000
-    }
+    if response.status_code == 429:
+        print("Rate limited. Retry later.")
+        return [], None
+    response.raise_for_status()
 
-    attempt = 1
-    while url and attempt <= retries:
-        try:
-            response = requests.get(url, headers=headers, params=params if attempt == 1 else {}, timeout=60)
-            if response.status_code == 429:
-                print(f"Rate limit hit. Attempt {attempt}. Waiting 30s...")
-                time.sleep(30)
-                continue
-            response.raise_for_status()
-            data = response.json()
-            page_events = data.get("results", [])
-            events.extend(page_events)
+    data = response.json()
+    return data.get("results", []), data.get("next")
 
-            # Pagination: set next URL or exit
-            url = data.get("next", None)
-            params = {}  # clear params after first page
-        except Exception as e:
-            print(f"Error during fetch attempt {attempt}: {e}")
-            time.sleep(10)
-            attempt += 1
-            continue
-
-    return events
 
 # --- Extract event timestamp in ms ---
 def get_event_time(event):

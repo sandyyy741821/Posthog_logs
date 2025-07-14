@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 import time
 
 # --- CONFIG ---
-POSTHOG_API_KEY = os.environ["POSTHOG_API_SECRET"]
+POSTHOG_API_KEY = os.environ["POSTHOG_API_KEY"]
 POWER_BI_PUSH_URL = os.environ["POWER_BI_PUSH_URL"]
 CHECKPOINT_FILE = os.path.join(os.path.dirname(__file__), "last_processed_time.txt")
 BATCH_SIZE = 10000

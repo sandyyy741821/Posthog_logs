@@ -1,0 +1,44 @@
+id
+distinct_id
+session id
+insert id
+library
+title
+session timeout (ms)
+page hostname
+session start time
+user logged in
+first page pathname
+pathname
+dead click tracking enabled
+current url
+time
+first page url
+user ip address
+event sent time
+user city
+user country
+user country code
+user state
+event name
+event type
+clicked_name
+prev pageview pathname
+INP input delay (ms)
+INP interaction time
+INP next paint time
+INP presentation delay (ms)
+INP processing duration (ms)
+INP total delay
+INP performance_rating
+INP event timestamp
+referrer url
+CLS shift time
+CLS shift value
+CLS total shift delta
+CLS performance rating
+CLS timestamp
+timestamp_IST
+timestamp_UTC
+message
+level

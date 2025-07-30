@@ -1,0 +1,12 @@
+userId
+userRole
+message
+endpoint
+caller
+level
+method
+event
+platform
+timestamp_UTC
+timestamp_IST
+

@@ -8,6 +8,7 @@ on:
 jobs:
   run-script:
     runs-on: ubuntu-latest
+    timeout-minutes: 4
 
     steps:
       - name: Checkout code with GH_PAT

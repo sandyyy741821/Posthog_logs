@@ -125,7 +125,6 @@ def transform_events(events):
         attribute_CLS = web_vitals_CLS.get('attribution', {})
 
         if props.get('$lib') == 'posthog-node':
-            print("Fetching events from the backend")
             if not isinstance(message, str):
                 message = str(message)
 
@@ -148,7 +147,6 @@ def transform_events(events):
                 'platform': props.get('$lib', '')
             })
         else:
-            print("Fetching events from the frontend")
             if not isinstance(message, str):
                 message = str(message)
 

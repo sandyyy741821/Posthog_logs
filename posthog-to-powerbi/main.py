@@ -124,7 +124,7 @@ def transform_events(events):
         web_vitals_CLS = props.get('$web_vitals_CLS_event', {})
         attribute_CLS = web_vitals_CLS.get('attribution', {})
 
-        if props.get('$lib') == 'posthog-js':
+        if props.get('$lib') == 'posthog-node':
 
             if not isinstance(message, str):
                 message = str(message)
